@@ -1,0 +1,8 @@
+.gradle/
+.idea/libraries/
+build/
+.idea/uiDesigner.xml
+.idea/copyright/profiles_settings.xml
+classes/
+/.idea/
+/out/
