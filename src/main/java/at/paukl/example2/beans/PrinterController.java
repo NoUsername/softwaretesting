@@ -36,7 +36,10 @@ public class PrinterController {
 
     @GetMapping("/printers/{minSpeed}")
     public List<Object> listPrinters(@PathVariable("minSpeed") int minSpeed) {
-        return printerService.findPrinterByMinSpeed(minSpeed).stream()
+        return printerService.findPrinterByMinSpeed(
+                // INTRODUCE BUG:
+                Math.min(minSpeed, 0)
+                ).stream()
                 .collect(Collectors.toList());
     }
 
