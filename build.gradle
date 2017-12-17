@@ -1,6 +1,7 @@
 buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.8.RELEASE")
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
     }
 }
 
@@ -17,6 +18,7 @@ buildscript {
 }
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.4'
@@ -41,12 +43,22 @@ dependencies {
     compile("org.springframework.boot:spring-boot-devtools")
 
     testCompile("junit:junit:4.12")
-    testCompile("pl.pragmatists:JUnitParams:1.1.1")
+    // support junit4 tests in new runner
+    testRuntime("org.junit.vintage:junit-vintage-engine:4.12.2")
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.2")
+    // partial support for using junit4 rules in junit5
+    testCompile("org.junit.jupiter:junit-jupiter-migrationsupport:5.0.2")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
+    testRuntime("org.junit.jupiter:junit-jupiter-params:5.0.2")
+    testRuntime("org.junit.platform:junit-platform-console:1.0.2")
+
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("com.github.sbrannen:spring-test-junit5:1.0.2")
     testCompile("org.seleniumhq.selenium:selenium-java:3.7.1")
     testCompile("com.google.guava:guava:19.0")
     testCompile("com.palantir.docker.compose:docker-compose-rule-junit4:0.33.0")
 }
+
 repositories {
     jcenter()
     maven {
@@ -55,6 +67,19 @@ repositories {
     maven {
         // docker compose rule
         url 'https://dl.bintray.com/palantir/releases'
+    }
+    maven {
+        // spring-test-junit5
+        url 'https://jitpack.io'
+    }
+}
+
+junitPlatform {
+    enableStandardTestTask true
+    filters {
+        tags {
+            include 'fast'
+        }
     }
 }
 
@@ -68,38 +93,52 @@ sourceSets {
 
 ext.generatedSourcesDir = "./src/main/generated-resources/"
 
-test {
-    useJUnit {
-        includeCategories 'at.paukl.testing.Fast'
-    }
-}
+// NOTE: quite hacky approach, multiple issues:
+// * hard to configure
+// * needs  testRuntime("org.junit.platform:junit-platform-console:1.0.2")
+// * does not generate nice html report from junit xml as normal gradle testruns do
+// * does not run all tests for some reason?! (PrinterServiceTest2 is not run)
+task slowTests(
+        type: JavaExec,
+        group: 'Verification'
+) {
+    dependsOn testClasses
 
-task('slowTests', type: Test) {
-    // always runnable by task - skips up-to-date check
-    outputs.upToDateWhen {false}
-    // some setup required for our docker rule
     if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
         environment "DOCKER_COMPOSE_LOCATION", "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker-compose.exe"
         environment "DOCKER_LOCATION", "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe"
     }
-    useJUnit {
-        includeCategories = [
-                'at.paukl.testing.Medium',
-                'at.paukl.testing.Slow'
-                ]
-    }
+
+    classpath = sourceSets.test.runtimeClasspath
+
+    main = 'org.junit.platform.console.ConsoleLauncher'
+    args = ['--scan-class-path',
+            sourceSets.test.output.getClassesDirs().asPath,
+            '--reports-dir', "${buildDir}/test-results/slowTests",
+            '--include-tag', 'slow',
+            '--include-tag', 'medium',
+    ]
 }
 
-task('endToEndTests', type: Test) {
-    // always runnable by task - skips up-to-date check
-    outputs.upToDateWhen {false}
+task endToEndTests2(
+        type: JavaExec,
+        group: 'Verification'
+) {
+    dependsOn testClasses
+
     String testingUrl = System.properties.containsKey('TESTING_URL')
     if (testingUrl) {
         systemProperty 'TESTING_URL', testingUrl
     }
-    useJUnit {
-        includeCategories 'at.paukl.testing.EndToEnd'
-    }
+
+    classpath = sourceSets.test.runtimeClasspath
+
+    main = 'org.junit.platform.console.ConsoleLauncher'
+    args = ['--scan-class-path',
+            sourceSets.test.output.getClassesDirs().asPath,
+            '--reports-dir', "${buildDir}/test-results/endToEndTests",
+            '--include-tag', 'endToEnd'
+    ]
 }
 
 

@@ -1,22 +1,21 @@
 package at.paukl.example2.beans;
 
 import at.paukl.example2.domain.PrinterEntity;
-import at.paukl.testing.Medium;
-import at.paukl.testing.Slow;
 import com.palantir.docker.compose.DockerComposeRule;
 import com.palantir.docker.compose.configuration.ProjectName;
 import com.palantir.docker.compose.configuration.ShutdownStrategy;
 import com.palantir.docker.compose.connection.waiting.HealthChecks;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
@@ -28,9 +27,11 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Paul Klingelhuber
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ActiveProfiles({"integrationtest", "standalone"})
-@Category(Slow.class)
+@Tag("slow")
+// reuse the junit 4 docker rule for now - enable junit5 migration feature
+@EnableRuleMigrationSupport
 public class PrinterServiceTest2 {
     private static final Logger LOG = getLogger(PrinterServiceTest2.class);
 
@@ -53,7 +54,7 @@ public class PrinterServiceTest2 {
     @Autowired
     private PrinterService printerService;
 
-    @BeforeClass
+    @BeforeAll
     public static void initClass() throws InterruptedException {
         LOG.info("waiting for container....");
         // Really ugly but sadly DockerComposeRule doesn't have a "wait for log".

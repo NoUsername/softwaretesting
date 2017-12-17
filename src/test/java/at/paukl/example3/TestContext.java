@@ -1,17 +1,12 @@
 package at.paukl.example3;
 
-import at.paukl.testing.EndToEnd;
-import com.google.common.collect.ImmutableMap;
-import org.junit.experimental.categories.Category;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
-import java.util.Arrays;
 
 /**
  * @author Paul Klingelhuber

@@ -1,24 +1,35 @@
 package at.paukl.example1;
 
-import at.paukl.testing.Fast;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 /**
  * @author Paul Klingelhuber
  */
-@Category(Fast.class)
+@Tag("fast")
 public class PrinterMonitorTest {
 
-    @Ignore
-    @Test(timeout = 1000)
+    @Disabled
+    @Test
     public void start() throws Exception {
-        PrinterMonitor printerMonitor = new PrinterMonitor();
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            PrinterMonitor printerMonitor = new PrinterMonitor();
 
-        printerMonitor.start();
+            printerMonitor.start();
 
-        // what now?
+            // what now?
+        });
+    }
+
+    @Test
+    public void dummyTest() throws Exception {
+        assertThat(true).isTrue();
     }
 
 /*

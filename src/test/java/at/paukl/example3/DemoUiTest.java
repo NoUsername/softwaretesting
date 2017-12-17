@@ -1,10 +1,9 @@
 package at.paukl.example3;
 
-import at.paukl.testing.EndToEnd;
-import org.junit.AfterClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -15,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -29,9 +28,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @SpringBootTest
 @OverrideAutoConfiguration(enabled = false)
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestContext.class)
-@Category(EndToEnd.class)
+@Tag("endToEnd")
 public class DemoUiTest {
     private static final Logger LOG = getLogger(DemoUiTest.class);
 
@@ -41,7 +40,7 @@ public class DemoUiTest {
     @Autowired
     private WebDriver webDriver;
 
-    @AfterClass
+    @AfterAll
     public static void end() {
         // just to see the result in the browser before it closes
         sleep(3000);

@@ -1,11 +1,9 @@
 package at.paukl.example2.beans;
 
 import at.paukl.example2.domain.PrinterEntity;
-import at.paukl.testing.Fast;
-import at.paukl.testing.Medium;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -14,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Arrays;
@@ -29,11 +27,11 @@ import static org.mockito.Mockito.when;
  * @author Paul Klingelhuber
  */
 @SpringBootTest
-@OverrideAutoConfiguration(enabled=true)
+@OverrideAutoConfiguration(enabled = true)
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ActiveProfiles("integrationtest")
-@Category(Medium.class)
+@Tag("medium")
 public class PrinterServiceTest {
 
     public static final String TEST_ENTITY_NAME = "TEST_ENTITY_1";
