@@ -1,0 +1,33 @@
+{
+  "name": "testing",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "compile-watch": "cross-env NODE_ENV=development ./node_modules/.bin/webpack --watch",
+    "copy-assets-watch": "./node_modules/.bin/cpx \"src/main/resources/**/*\" \"out/production/resources/\" --watch",
+    "copy-compiled-assets-watch": "./node_modules/.bin/cpx \"src/main/generated-resources/**/*\" \"out/production/resources/\" --watch"
+  },
+  "dependencies": {
+    "lodash": "4.17.4",
+    "vue": "2.4.4"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ],
+  "devDependencies": {
+    "babel-core": "6.26.0",
+    "babel-loader": "7.1.2",
+    "babel-preset-env": "1.6.0",
+    "babel-preset-stage-3": "6.24.1",
+    "cpx": "1.5.0",
+    "cross-env": "5.0.5",
+    "css-loader": "0.28.7",
+    "file-loader": "1.1.4",
+    "vue-loader": "13.0.5",
+    "vue-template-compiler": "2.4.4",
+    "webpack": "3.6.0",
+    "webpack-dev-server": "2.9.1"
+  }
+}

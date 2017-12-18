@@ -1,9 +1,16 @@
 package at.paukl.example2.beans;
 
 import at.paukl.example2.domain.PrinterEntity;
-import com.github.klousiaj.junit.DockerRule;
+import at.paukl.testing.Medium;
+import at.paukl.testing.Slow;
+import com.palantir.docker.compose.DockerComposeRule;
+import com.palantir.docker.compose.configuration.ProjectName;
+import com.palantir.docker.compose.configuration.ShutdownStrategy;
+import com.palantir.docker.compose.connection.waiting.HealthChecks;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,28 +25,42 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 
 /**
- * @author ext.pkling
+ * @author Paul Klingelhuber
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ActiveProfiles({"integrationtest", "standalone"})
+@Category(Slow.class)
 public class PrinterServiceTest2 {
     private static final Logger LOG = getLogger(PrinterServiceTest2.class);
 
     public static final String TEST_ENTITY_NAME = "TEST_ENTITY_1";
 
     @ClassRule
-    public static DockerRule rabbitRule =
-            DockerRule.builder()
-                    .image("mysql:5.7.20")
-                    .ports("3316:3306")
-                    .envs("MYSQL_DATABASE=testexample", "MYSQL_ROOT_PASSWORD=root")
-                    .containerName("mysqlDockerUnitTest")
-                    .waitForLog("mysqld: ready for connections")
-                    .build();
+    public static DockerComposeRule docker = DockerComposeRule.builder()
+            .file("src/test/resources/docker-compose.yml")
+            // Restart-related: if we let the rule stop the container we'll get errorMessages,
+            //  because the db-conns get torn down later than the container
+            //  therefore we use this stop-on-next-test-start thing... this means you should
+            //  stop the containers manually afterwards.
+            .removeConflictingContainersOnStartup(true)
+            .projectName(ProjectName.fromString("integrationtest"))
+            .shutdownStrategy(ShutdownStrategy.SKIP)
+            // End restart-related.
+            .waitingForService("mysqlfortest", HealthChecks.toHaveAllPortsOpen())
+            .build();
 
     @Autowired
     private PrinterService printerService;
+
+    @BeforeClass
+    public static void initClass() throws InterruptedException {
+        LOG.info("waiting for container....");
+        // Really ugly but sadly DockerComposeRule doesn't have a "wait for log".
+        //  The cleaner solution would of course be to write a nice "wait for log output" HealthCheck
+        //  for the docker-compose testing library.
+        Thread.sleep(20000);
+    }
 
     @Test
     public void testService() {

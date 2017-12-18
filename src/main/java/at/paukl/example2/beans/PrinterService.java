@@ -10,8 +10,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,9 +22,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Component
 public class PrinterService {
     private static final Logger LOG = getLogger(PrinterService.class);
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     private PrinterRepository printerRepository;

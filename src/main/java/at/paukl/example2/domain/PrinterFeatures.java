@@ -1,7 +1,7 @@
 package at.paukl.example2.domain;
 
 /**
- * @author ext.pkling
+ * @author Paul Klingelhuber
  */
 public class PrinterFeatures {
     private int height;

@@ -6,3 +6,6 @@ build/
 classes/
 /.idea/
 /out/
+/node_modules/
+/src/main/generated-resources/
+/other/testserver/*.jar

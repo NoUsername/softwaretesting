@@ -1,13 +1,18 @@
 package at.paukl.example1;
 
+import at.paukl.testing.Fast;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 /**
- * @author ext.pkling
+ * @author Paul Klingelhuber
  */
+@Category(Fast.class)
 public class PrinterMonitorTest {
 
-    @Test
+    @Ignore
+    @Test(timeout = 1000)
     public void start() throws Exception {
         PrinterMonitor printerMonitor = new PrinterMonitor();
 

@@ -1,13 +1,21 @@
 package at.paukl.example2.beans;
 
 import at.paukl.example2.domain.PrinterEntity;
+import at.paukl.testing.Fast;
+import at.paukl.testing.Medium;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,17 +26,22 @@ import static org.mockito.Mockito.when;
 
 
 /**
- * @author ext.pkling
+ * @author Paul Klingelhuber
  */
 @SpringBootTest
+@OverrideAutoConfiguration(enabled=true)
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 @RunWith(SpringRunner.class)
 @ActiveProfiles("integrationtest")
+@Category(Medium.class)
 public class PrinterServiceTest {
 
     public static final String TEST_ENTITY_NAME = "TEST_ENTITY_1";
 
     @MockBean
     PrinterRepository printerRepository;
+    @MockBean
+    PlatformTransactionManager platformTransactionManager;
 
     @Autowired
     private PrinterService printerService;
@@ -59,3 +72,9 @@ public class PrinterServiceTest {
     }
 
 }
+
+/*
+ NOTES:
+ * yes this works, but think about what this actually tests?
+ * think about when such tests would make sense
+ */

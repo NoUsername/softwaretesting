@@ -1,0 +1,17 @@
+
+version: "3"
+services:
+  mysql:
+    image: mysql:5.7.20
+    environment:
+      - MYSQL_DATABASE=testexample
+      - MYSQL_ROOT_PASSWORD=root
+  testing:
+    image: temp-testing
+    ports:
+      - "1235:1234"
+    environment:
+      - WAIT_FOR=mysql:3306
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/testexample?user=root&password=root
+    depends_on:
+      - "mysql"

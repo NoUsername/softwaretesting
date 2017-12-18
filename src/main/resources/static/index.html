@@ -1,60 +1,12 @@
 <html>
 <head>
-	<script type="text/javascript" src="/vue.js"></script>
-	<script type="text/javascript" src="/lodash.js"></script>
 	<link rel="stylesheet" type="text/css" href="/index.css"/>
 </head>
-<body style="font-family: sans-serif">
+<body>
 
-<div id="app">
-	<transition name="slide-top">
-		<notification v-show="showMessage">{{ message }}</notification>
-	</transition>
+<div id="app"></div>
 
-	<printer-menu v-bind:initial-mode="mode" @navigate="navigate"></printer-menu>
-
-	<div class="content-container">
-		<transition name="slide-fade">
-			<printer-viewer v-show="mode == 'view'" v-bind:printers="printers"></printer-viewer>
-		</transition>
-		<transition name="slide-fade">
-			<printer-creator v-show="mode == 'create'" v-bind:printers="printers"></printer-creator>
-		</transition>
-	</div>
-</div>
-
-
-<script type="text/x-template" id="printer-menu-template">
-	<div>
-		<a href="#" id="link-view" v-on:click="setMode('view')">Viewer</a>
-		<a href="#" id="link-create" v-on:click="setMode('create')">Creator</a>
-	</div>
-</script>
-
-<script type="text/x-template" id="printer-creator-template">
-	<div>
-		<p>Create new printer:</p>
-		<label>Name:<input type="text" v-on:keyup.13="save" placeholder="3dMaster9000" name="printerName" v-model="name"/></label>
-
-		<button @click="save">Save</button>
-	</div>
-</script>
-<script type="text/x-template" id="printer-viewer-template">
-	<div>
-		<p>Printers:</p>
-		minimum Speed: <input v-on:input="debounceReload" name="minSpeed"
-							  v-model="minSpeed" type="text"/>
-		<span v-show="dirty" id="dirty-indicator">...</span>
-		<ul id="printer-list">
-			<li v-for="printer in printers" v-bind:title="printer.jsonDoc">
-				{{ printer.name }}
-			</li>
-		</ul>
-	</div>
-</script>
-
-
-<script type="text/javascript" src="/index.js"></script>
+<script type="text/javascript" src="/bundle.js"></script>
 </body>
 </html>
 

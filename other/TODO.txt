@@ -1,0 +1,14 @@
+TODOs:
+
+
+
+NICE-TO-HAVEs:
+* js tests
+
+
+DONE:
+* gradle config so that not all tests are run always (test categories)
+* ui tests different environments
+* buildserver demo (jenkinsfile)
+* junit5
+* chrome headless

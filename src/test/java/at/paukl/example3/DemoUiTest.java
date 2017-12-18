@@ -1,13 +1,19 @@
 package at.paukl.example3;
 
+import at.paukl.testing.EndToEnd;
 import org.junit.AfterClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -16,25 +22,36 @@ import java.util.function.BooleanSupplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * @author ext.pkling
+ * @author Paul Klingelhuber
  */
+@SpringBootTest
+@OverrideAutoConfiguration(enabled = false)
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestContext.class)
-public class UiTest {
+@Category(EndToEnd.class)
+public class DemoUiTest {
+    private static final Logger LOG = getLogger(DemoUiTest.class);
+
+    @Value("${testing.url:http://localhost:1234/}")
+    private String baseUrl;
 
     @Autowired
     private WebDriver webDriver;
 
     @AfterClass
     public static void end() {
+        // just to see the result in the browser before it closes
         sleep(3000);
     }
 
     @Test
     public void testSearch() {
-        webDriver.get("http://localhost:1234/");
+        LOG.info("testing against {}", baseUrl);
+        webDriver.get(baseUrl);
+        ScreenshotUtil.takeScreenshot(webDriver, "initial");
         waitForElement(By.id("link-view"), 5000);
         final WebElement element = webDriver.findElement(By.id("link-view"));
         element.click();
@@ -48,11 +65,20 @@ public class UiTest {
 
         waitDirtyIndicatorGone();
 
+        LOG.info("data reloaded...");
+
         final List<WebElement> elements = webDriver.findElements(By.cssSelector("#printer-list li"));
         for (WebElement liElement : elements) {
-            assertThat(liElement.getText().trim())
-                    .isNotEqualTo("foo");
+            try {
+                assertThat(liElement.getText().trim())
+                        .isNotEqualTo("foo");
+            } catch (Throwable e) {
+                LOG.warn("failed: " + e.getMessage(), e);
+                ScreenshotUtil.takeScreenshot(webDriver, "fail");
+                throw e;
+            }
         }
+        ScreenshotUtil.takeScreenshot(webDriver, "success");
 
         sleep(5000);
     }
@@ -102,3 +128,7 @@ public class UiTest {
     }
 
 }
+
+/*
+TODO: refactor to use page abstraction pattern
+ */

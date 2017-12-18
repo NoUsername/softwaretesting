@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author ext.pkling
+ * @author Paul Klingelhuber
  */
 @RestController
 public class PrinterController {
