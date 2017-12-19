@@ -42,3 +42,10 @@ End-to-end tests for the main webapp project.
     gradlew bootRun
     # in another shell:
     gradlew endToEndTests
+
+### Branches:
+
+	master     "main/base" version
+	bug        introduces a bug in the webapp (to show jenkins automated ui-tests)
+	junit5     tried to port all tests to junit5
+	example1   one example of how you could refactor the PrintMonitor demo + add some tests
